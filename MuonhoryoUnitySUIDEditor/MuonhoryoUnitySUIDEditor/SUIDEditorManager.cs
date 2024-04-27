@@ -41,10 +41,15 @@ namespace MuonhoryoLibrary.Unity.SUID.Editor
         }
         private void OnValidate()
         {
-            if (Application.isPlaying)
-                return;
-
             Instance_ = this;
+            if (Application.isPlaying)
+            {
+                var objs = new List<SUIDObjectEditorInitializer>(
+                    GameObject.FindObjectsOfType<SUIDObjectEditorInitializer>());
+                foreach (var obj in objs)
+                    obj.InitializeSUIDObject();
+            }
+
             OwnedSceneName = SceneManager.GetActiveScene().name;
             if (!IsInitialized)
             {
@@ -62,6 +67,7 @@ namespace MuonhoryoLibrary.Unity.SUID.Editor
                 if (!TryGetComponent(out Owner))
                 {
                     Owner = gameObject.AddComponent<SUIDManager>();
+                    Owner.hideFlags = HideFlags.HideInHierarchy | HideFlags.HideInInspector;
                 }
             }
         }
